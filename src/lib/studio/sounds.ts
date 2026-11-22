@@ -1,7 +1,7 @@
 // sound effects and music beds made in the browser: no files from anywhere else, nothing to license.
 // each one is worked out sample by sample, written as a wav and added like an imported sound
 
-export type Sfx = 'whoosh' | 'pop' | 'boom' | 'ding' | 'click' | 'riser' | 'impact' | 'sparkle' | 'buzzer' | 'drumroll' | 'brakes' | 'crackle' | 'rattle' | 'rain' | 'vibrate' | 'drone' | 'lightsout' | 'alarm' | 'heartbeat';
+export type Sfx = 'whoosh' | 'pop' | 'boom' | 'ding' | 'click' | 'riser' | 'impact' | 'sparkle' | 'buzzer' | 'drumroll' | 'brakes' | 'crackle' | 'rattle' | 'rain' | 'vibrate' | 'drone' | 'lightsout' | 'alarm' | 'heartbeat' | 'wind' | 'shiver';
 
 export const SFX: { id: Sfx; label: string }[] = [
   { id: 'whoosh', label: 'Whoosh' },
@@ -23,7 +23,9 @@ export const SFX: { id: Sfx; label: string }[] = [
   { id: 'drone', label: 'Deep drone (6 s)' },
   { id: 'lightsout', label: 'Lights out' },
   { id: 'alarm', label: 'Emergency alarm (3 s)' },
-  { id: 'heartbeat', label: 'Heartbeat (4 s)' }
+  { id: 'heartbeat', label: 'Heartbeat (4 s)' },
+  { id: 'wind', label: 'Cold wind (6 s)' },
+  { id: 'shiver', label: 'Shiver (1.6 s)' }
 ];
 
 export type Mood = 'calm' | 'tense' | 'upbeat' | 'mystery';
@@ -235,6 +237,32 @@ export function sfxSamples(kind: Sfx): Float32Array {
         const b = t % 1;
         const thump = (u: number) => (u > 0 && u < 0.12 ? Math.sin(2 * Math.PI * 55 * u) * Math.exp(-u * 30) : 0);
         out[i] = (thump(b) + 0.7 * thump(b - 0.22)) * 0.9;
+      }
+      break;
+    }
+    case 'wind': {
+      // a cold wind: noise that swells and falls, with a whistle in it
+      out = new Float32Array(len(6));
+      let lp = 0;
+      let lp2 = 0;
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const swell = 0.35 + 0.65 * Math.sin((Math.PI * t) / 6) ** 2 * (0.7 + 0.3 * Math.sin(t * 2.4));
+        lp += (n() - lp) * 0.035;
+        lp2 += (n() - lp2) * 0.012;
+        out[i] = (lp * 0.9 + lp2 * 1.4) * swell + Math.sin(2 * Math.PI * (900 + 120 * Math.sin(t * 1.3)) * t) * 0.012 * swell;
+      }
+      break;
+    }
+    case 'shiver': {
+      // a shimmer running up: fast tremolo on rising bright tones, the feeling of a chill
+      out = new Float32Array(len(1.6));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const f = 1800 + 1800 * (t / 1.6);
+        const trem = 0.5 + 0.5 * Math.sin(2 * Math.PI * 28 * t);
+        const env = Math.min(1, t / 0.08) * Math.exp(-Math.max(0, t - 0.7) * 3);
+        out[i] = (Math.sin(2 * Math.PI * f * t) * 0.14 + Math.sin(2 * Math.PI * f * 1.5 * t) * 0.07 + n() * 0.04) * trem * env;
       }
       break;
     }
