@@ -55,7 +55,8 @@ export function drawSubtitles(ctx: Ctx2D, doc: Doc, frame: number, base: Mat) {
   const st = p.subtitles;
   const safe = safeZoneFor(doc.width, doc.height) ?? { top: doc.height * 0.08, bottom: doc.height * 0.2, left: doc.width * 0.06, right: doc.width * 0.1 };
   const size = doc.width * SIZES[st.size];
-  const maxWidth = doc.width - safe.left - safe.right;
+  // exactly in the middle of the picture: the width is kept free on both sides alike
+  const maxWidth = doc.width - 2 * Math.max(safe.left, safe.right);
   ctx.save();
   ctx.setTransform(base[0], 0, 0, base[3], base[4], base[5]);
   ctx.font = `800 ${size}px Inter, "Helvetica Neue", Arial, sans-serif`;
@@ -65,10 +66,17 @@ export function drawSubtitles(ctx: Ctx2D, doc: Doc, frame: number, base: Mat) {
   const lineH = size * 1.22;
   const blockH = lines.length * lineH;
   const free = doc.height - safe.top - safe.bottom - blockH;
-  // a cue can sit somewhere else, above a phone held in the picture
-  const bottom = doc.height - safe.bottom - free * Math.max(0, Math.min(1, cue.position ?? st.position));
-  const top = bottom - blockH;
-  const cx = safe.left + maxWidth / 2;
+  // a cue can sit somewhere else, above the action of the scene: y is the middle of the block as a share
+  // of the height, kept inside the safe zone
+  let top: number;
+  if (cue.y !== undefined) {
+    const mid = Math.max(safe.top + blockH / 2, Math.min(doc.height - safe.bottom - blockH / 2, cue.y * doc.height));
+    top = mid - blockH / 2;
+  } else {
+    const bottom = doc.height - safe.bottom - free * Math.max(0, Math.min(1, cue.position ?? st.position));
+    top = bottom - blockH;
+  }
+  const cx = doc.width / 2;
   // pop: the block grows in over the first frames
   const age = frame - cue.start;
   const pop = st.animation === 'pop' ? Math.min(1, 0.7 + age * 0.1) : 1;

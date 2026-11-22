@@ -251,7 +251,7 @@ export function nervous(s: number, cross = 0): Item[] {
   const arm = NERVE[NERVE.length - 1];
   items.push(ellipse('flash', arm.x, arm.y + 10, 40 + 90 * hit, 40 + 90 * hit, null, 7, hit * (1 - Math.max(0, (s - 1.35) * 4))));
   const figure = items.splice(1);
-  const out: Item[] = [items[0], place('figure', figure, 0, 150, 1)];
+  const out: Item[] = [items[0], place('figure', figure, 119, 120, 0.78)];
   // a switch nobody can reach
   out.push(
     group('switch', [rect('sw.box', 700, 1610, 230, 110, '#2c3846', 6, 55), ellipse('sw.knob', 760, 1665, 42, 42, SC.cream, 5), stroke('sw.x1', [{ x: 690, y: 1570 }, { x: 940, y: 1750 }], '#d06a6a', 14), stroke('sw.x2', [{ x: 940, y: 1570 }, { x: 690, y: 1750 }], '#d06a6a', 14)], cross),
@@ -360,11 +360,11 @@ export function catHuman(s: number): Item[] {
   const arm = gooseArm(s, { bare: true, n: 9, length: 1, seed: 8 });
   return [
     backdrop('#25312f'),
-    rect('floor', -40, 1010, 1160, 1000, '#1c2523', 0),
-    place('cat', catBristle(s), 60, 40, 0.92),
-    place('human', arm, 216, 700, 0.6),
+    rect('floor', -40, 1040, 1160, 1000, '#1c2523', 0),
+    place('cat', catBristle(s), 70, -10, 0.82),
+    place('human', arm, 216, 740, 0.6),
     label('l.cat', 'Katze\nbei Gefahr', 130, 190, 76, SC.cream, 1, 520),
-    label('l.human', 'Mensch: Gänsehaut', 130, 1010, 62, SC.cream, 1, 860)
+    label('l.human', 'Mensch: Gänsehaut', 130, 1085, 58, SC.cream, 1, 860)
   ];
 }
 
@@ -385,8 +385,8 @@ export function airLayer(s: number): Item[] {
       return group(`cold.${i}`, [stroke(`cold.${i}.l`, [{ x, y: y - 260 }, { x, y }], SC.cold, 14), shape(`cold.${i}.h`, poly([{ x: x - 34, y: y - 28 }, { x: x + 34, y: y - 28 }, { x, y: y + 22 }]), SC.cold, 5)]);
     }),
     label('cold.t', 'Kälte', 130, 190, 80, SC.cold, 1, 520),
-    label('air.t', 'Luftschicht', 130, 1340, 78, '#f6e9a8', e),
-    label('warm.t', 'hält die Wärme', 130, 1440, 58, SC.cream, e)
+    label('air.t', 'Luftschicht', 580, 180, 62, '#f6e9a8', e, 420),
+    label('warm.t', 'hält die\nWärme', 580, 262, 54, SC.cream, e, 420)
   );
   return items;
 }
@@ -460,8 +460,8 @@ export function brainQuestion(t: number): Item[] {
     const p = (t * 1.2 + i / 3) % 1;
     items.push(ellipse(`ring.${i}`, 540, 820, 250 + p * 420, 190 + p * 330, null, 6, 0.75 * (1 - p)));
   }
-  [[200, 460, 160], [860, 420, 190], [260, 1180, 150], [820, 1160, 170]].forEach(([x, y, size], i) => items.push(text(`q.${i}`, '?', x, y - t * 70 - i * 6, size, SC.amber, { weight: 800, width: 200, align: 'center', opacity: 0.9 })));
-  items.push(label('b.t', 'Was genau macht\ndas Gehirn dabei?', 130, 1420, 76, SC.cream, 1, 860));
+  [[160, 520, 160], [860, 480, 190], [220, 1100, 150], [830, 1080, 170]].forEach(([x, y, size], i) => items.push(text(`q.${i}`, '?', x, y - t * 70 - i * 6, size, SC.amber, { weight: 800, width: 200, align: 'center', opacity: 0.9 })));
+  items.push(label('b.t', 'Was genau macht\ndas Gehirn dabei?', 130, 190, 66, SC.cream, 1, 560));
   return items;
 }
 

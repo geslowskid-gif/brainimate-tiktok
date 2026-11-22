@@ -28,6 +28,9 @@ import type { CameraMove, Production, Scene } from './types';
 
 export const MARK = 'scene:';
 
+// the height of the middle of the subtitles as a share of the picture: the middle, above the action, below it
+export const SUBS_Y = { middle: 0.5, above: 0.27, below: 0.73 } as const;
+
 function marked(k: Keyframe): boolean {
   return k.label.startsWith(MARK);
 }
@@ -574,10 +577,13 @@ export function buildTimeline(doc: Doc, p: Production): Built {
   }
 
   for (const l of doc.layers) if (l.type !== 'folder') l.length = Math.max(l.length, total);
-  // in a first person scene with a phone in the hands the subtitles move up, the screen stays free
+  // where the subtitles stand: in the middle, or out of the way of what has to be seen. a phone held in a
+  // first person scene always keeps its screen free
   for (const c of cues) {
     const span = spans.find((x) => c.start >= x.start && c.start < x.end);
-    if (span && isPov(span.scene) && span.scene.pov?.action === 'phone') c.position = 0.92;
+    if (!span) continue;
+    const place = span.scene.subs ?? (isPov(span.scene) && span.scene.pov?.action === 'phone' ? 'above' : 'middle');
+    c.y = SUBS_Y[place];
   }
   p.cues = cues;
   doc.production = p;
