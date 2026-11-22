@@ -118,8 +118,8 @@ export function tag(kind: Sureness, x = 60, y = 140, opacity = 1): Item {
   return group('tag', [rect('tag.box', x, y, w, 84, '#14181d', 5, 42), ellipse('tag.dot', x + 42, y + 42, 14, 14, s.color, 0), text('tag.text', s.label, x + 72, y + 18, 38, '#e9e6df', { weight: 800, width: w })], opacity);
 }
 
-export function label(id: string, s: string, x: number, y: number, size = 56, color = SC.cream, opacity = 1, width = 900, align: 'left' | 'center' | 'right' = 'left'): Item {
-  return text(id, s, x, y, size, color, { weight: 800, width, align, opacity });
+export function label(id: string, s: string, x: number, y: number, size = 56, color = SC.cream, opacity = 1, width = 900, align: 'left' | 'center' | 'right' = 'left', font?: string): Item {
+  return text(id, s, x, y, size, color, { weight: 800, width, align, opacity, font });
 }
 
 // ------------------------------------------------------------------ skin and hairs, seen from the side
@@ -470,4 +470,9 @@ export function headphones(x: number, y: number, r: number, opacity = 1): Item[]
   const arc = [{ x: x - r * 1.0, y: y + r * 0.05 }, { x: x - r * 0.95, y: y - r * 0.8 }, { x, y: y - r * 1.2 }, { x: x + r * 0.95, y: y - r * 0.8 }, { x: x + r * 1.0, y: y + r * 0.05 }];
   const cup = (id: string, cx: number) => group(id, [ellipse(`${id}.o`, cx, y + r * 0.1, r * 0.3, r * 0.45, '#2a2d33', 6), ellipse(`${id}.i`, cx, y + r * 0.1, r * 0.17, r * 0.3, '#f0a23a', 0)], opacity);
   return [stroke('hp.band', curve(arc), '#14161a', r * 0.22, opacity), stroke('hp.rim', curve(arc), '#f0a23a', r * 0.09, opacity), cup('hp.l', x - r * 1.0), cup('hp.r', x + r * 1.0)];
+}
+
+// a dark rounded plate behind a line of text so it reads on any picture
+export function plate(id: string, x: number, y: number, w: number, h: number, opacity = 0.6, color = '#14181d'): Item {
+  return rect(id, x, y, w, h, color, 0, h / 2, opacity);
 }
