@@ -183,9 +183,9 @@ export function skinSection(s: number, labels = 1): Item[] {
     shape('epidermis', { closed: true, anchors: [smooth(-60, 910, 20), smooth(300, 910, 40), smooth(560, 910 - lift, 60), smooth(820, 910, 40), smooth(1140, 910, 20), corner(1140, 1010), corner(-60, 1010)] }, SC.skin, 7),
     rect('dermis', -40, 1008, 1160, 520, SC.pink, 7),
     rect('fat', -40, 1526, 1160, 500, SC.fat, 7),
-    ellipse('fat.cell', 200, 1700, 80, 60, '#f1de9d', 4, 0.9),
-    ellipse('fat.cell', 520, 1780, 90, 66, '#f1de9d', 4, 0.9),
-    ellipse('fat.cell', 860, 1690, 84, 62, '#f1de9d', 4, 0.9),
+    ellipse('fat.cell.0', 200, 1700, 80, 60, '#f1de9d', 4, 0.9),
+    ellipse('fat.cell.1', 520, 1780, 90, 66, '#f1de9d', 4, 0.9),
+    ellipse('fat.cell.2', 860, 1690, 84, 62, '#f1de9d', 4, 0.9),
     stroke('sheath', [{ x: 0, y: 0 }, { x: 0, y: -400 }], '#c98b86', 56),
     ellipse('bulb', R.x, R.y + 10, 52, 46, '#cc8f8a', 6),
     stroke('muscle.ink', [A, { x: lerp(380, 440, e), y: lerp(1180, 1120, e) }, at40], INK, w + 12),
@@ -287,8 +287,8 @@ export function ancestor(s: number, t: number): Item[] {
     ellipse('arm.r', cx + rx + 10, cy + 40, 60, 190, '#6b4e37', 7),
     ellipse('head', cx - 20, cy - ry - 70, 82, 92, '#c79a78', 7),
     shape('brow', curve([{ x: cx - 90, y: cy - ry - 90 }, { x: cx - 50, y: cy - ry - 112 }, { x: cx - 5, y: cy - ry - 92 }]), null, 12),
-    ellipse('eye', cx - 40, cy - ry - 62, 8, 10, INK, 0),
-    ellipse('eye', cx + 0, cy - ry - 62, 8, 10, INK, 0)
+    ellipse('eye.l', cx - 40, cy - ry - 62, 8, 10, INK, 0),
+    ellipse('eye.r', cx + 0, cy - ry - 62, 8, 10, INK, 0)
   ];
   // the fur: hairs all around the body, lying down at first, standing in the cold
   const fur: Item[] = [];
@@ -336,21 +336,21 @@ export function catBristle(s: number): Item[] {
   const D = '#9c6636';
   return [
     shape('tail', zig(850, 640, 70 + 40 * e, 260, 14, amp, 0.35), O, 7),
-    shape('legs.b', rectPath(640, 900, 60, 230, 24), D, 6),
-    shape('legs.f', rectPath(360, 900, 60, 230, 24), D, 6),
-    shape('legs.b2', rectPath(560, 900, 60, 230, 24), O, 6),
-    shape('legs.f2', rectPath(440, 900, 60, 230, 24), O, 6),
+    shape('leg.b1', rectPath(640, 900, 60, 230, 24), D, 6),
+    shape('leg.f1', rectPath(360, 900, 60, 230, 24), D, 6),
+    shape('leg.b2', rectPath(560, 900, 60, 230, 24), O, 6),
+    shape('leg.f2', rectPath(440, 900, 60, 230, 24), O, 6),
     shape('body', zig(540, 800, 250, 140 + 30 * e, 16, amp), O, 7),
-    shape('stripe', poly([{ x: 480, y: 660 - 20 * e }, { x: 520, y: 760 }, { x: 440, y: 770 }]), D, 0),
-    shape('stripe', poly([{ x: 600, y: 650 - 20 * e }, { x: 640, y: 760 }, { x: 560, y: 765 }]), D, 0),
-    shape('stripe', poly([{ x: 720, y: 670 - 20 * e }, { x: 750, y: 770 }, { x: 680, y: 770 }]), D, 0),
+    shape('stripe.0', poly([{ x: 480, y: 660 - 20 * e }, { x: 520, y: 760 }, { x: 440, y: 770 }]), D, 0),
+    shape('stripe.1', poly([{ x: 600, y: 650 - 20 * e }, { x: 640, y: 760 }, { x: 560, y: 765 }]), D, 0),
+    shape('stripe.2', poly([{ x: 720, y: 670 - 20 * e }, { x: 750, y: 770 }, { x: 680, y: 770 }]), D, 0),
     shape('head', zig(300, 770, 100, 88, 9, amp * 0.5), O, 7),
-    shape('ear', poly([{ x: 230, y: 710 }, { x: 240, y: 610 }, { x: 305, y: 685 }]), O, 6),
-    shape('ear', poly([{ x: 310, y: 690 }, { x: 370, y: 610 }, { x: 380, y: 720 }]), O, 6),
-    ellipse('eye', 270, 770, 20, lerp(14, 26, e), '#f0e07a', 5),
-    ellipse('eye', 340, 770, 20, lerp(14, 26, e), '#f0e07a', 5),
-    shape('pupil', rectPath(266, 752, 9, lerp(24, 36, e), 4), INK, 0),
-    shape('pupil', rectPath(336, 752, 9, lerp(24, 36, e), 4), INK, 0),
+    shape('ear.0', poly([{ x: 230, y: 710 }, { x: 240, y: 610 }, { x: 305, y: 685 }]), O, 6),
+    shape('ear.1', poly([{ x: 310, y: 690 }, { x: 370, y: 610 }, { x: 380, y: 720 }]), O, 6),
+    ellipse('eye.0', 270, 770, 20, lerp(14, 26, e), '#f0e07a', 5),
+    ellipse('eye.1', 340, 770, 20, lerp(14, 26, e), '#f0e07a', 5),
+    shape('pupil.0', rectPath(266, 770 - lerp(24, 36, e) / 2, 9, lerp(24, 36, e), 4), INK, 0),
+    shape('pupil.1', rectPath(336, 770 - lerp(24, 36, e) / 2, 9, lerp(24, 36, e), 4), INK, 0),
     shape('nose', poly([{ x: 290, y: 805 }, { x: 320, y: 805 }, { x: 305, y: 825 }]), '#c0676b', 4)
   ];
 }
@@ -361,10 +361,10 @@ export function catHuman(s: number): Item[] {
   return [
     backdrop('#25312f'),
     rect('floor', -40, 1010, 1160, 1000, '#1c2523', 0),
-    place('cat', catBristle(s), 60, 120, 0.95),
+    place('cat', catBristle(s), 60, 40, 0.92),
     place('human', arm, 216, 700, 0.6),
     label('l.cat', 'Katze\nbei Gefahr', 130, 190, 76, SC.cream, 1, 520),
-    label('l.human', 'Mensch: Gänsehaut', 130, 990, 62, SC.cream, 1, 860)
+    label('l.human', 'Mensch: Gänsehaut', 130, 1010, 62, SC.cream, 1, 860)
   ];
 }
 
