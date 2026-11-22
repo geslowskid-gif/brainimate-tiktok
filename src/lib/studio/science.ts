@@ -467,8 +467,7 @@ export function brainQuestion(t: number): Item[] {
 
 // headphones over a head: a band over the top and a cup on each ear, r is the radius of the head
 export function headphones(x: number, y: number, r: number, opacity = 1): Item[] {
-  const band = stroke('hp.band', curve([{ x: x - r * 1.02, y: y + r * 0.1 }, { x: x - r * 0.9, y: y - r * 0.85 }, { x, y: y - r * 1.25 }, { x: x + r * 0.9, y: y - r * 0.85 }, { x: x + r * 1.02, y: y + r * 0.1 }]), '#2a2d33', r * 0.2, opacity);
-  const rim = stroke('hp.rim', curve([{ x: x - r * 1.02, y: y + r * 0.1 }, { x: x - r * 0.9, y: y - r * 0.85 }, { x, y: y - r * 1.25 }, { x: x + r * 0.9, y: y - r * 0.85 }, { x: x + r * 1.02, y: y + r * 0.1 }]), '#d0a040', r * 0.06, opacity);
-  const cup = (id: string, cx: number) => ellipse(id, cx, y + r * 0.15, r * 0.3, r * 0.42, '#2a2d33', 5, opacity);
-  return [band, rim, cup('hp.l', x - r * 1.0), cup('hp.r', x + r * 1.0)];
+  const arc = [{ x: x - r * 1.0, y: y + r * 0.05 }, { x: x - r * 0.95, y: y - r * 0.8 }, { x, y: y - r * 1.2 }, { x: x + r * 0.95, y: y - r * 0.8 }, { x: x + r * 1.0, y: y + r * 0.05 }];
+  const cup = (id: string, cx: number) => group(id, [ellipse(`${id}.o`, cx, y + r * 0.1, r * 0.3, r * 0.45, '#2a2d33', 6), ellipse(`${id}.i`, cx, y + r * 0.1, r * 0.17, r * 0.3, '#f0a23a', 0)], opacity);
+  return [stroke('hp.band', curve(arc), '#14161a', r * 0.22, opacity), stroke('hp.rim', curve(arc), '#f0a23a', r * 0.09, opacity), cup('hp.l', x - r * 1.0), cup('hp.r', x + r * 1.0)];
 }

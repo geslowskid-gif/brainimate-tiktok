@@ -3,7 +3,9 @@ import { newId } from '$lib/core/ids';
 import { makeLayer, LAYER_COLORS } from '$lib/editor/editor';
 import { restCamera, makeTransition, cameraKeyAt } from '$lib/anim/camera';
 import { applyPoint, multiply, translate } from '$lib/core/mat';
-import { worldMatrices } from '$lib/rig/bones';
+import { itemBounds } from '$lib/core/items';
+import { boxCenter, isEmpty } from '$lib/core/bbox';
+import { rigFor, worldMatrices } from '$lib/rig/bones';
 import { bonesAt } from '$lib/rig/turn';
 import { poseAt } from '$lib/render/frame';
 import { ANIMATIONS, talkPattern, type AnimKind } from '$lib/character/anim';
@@ -68,6 +70,24 @@ export function jointAt(doc: Doc, folderId: string, frame: number, name: 'Head' 
   if (!m) return null;
   // the middle of the head, the top of the hip
   return name === 'Head' ? applyPoint(m, { x: bone.length * 0.5, y: 0 }) : { x: m[4], y: m[5] };
+}
+
+// the skull of a character at a frame as a circle on the stage: its middle and radius, from the drawn head
+// and the hair, for things worn on it like headphones or a hat
+export function headCircle(doc: Doc, folderId: string, frame: number): { x: number; y: number; r: number } | null {
+  const body = characterLayers(doc.layers, folderId)?.body;
+  if (!body) return null;
+  const items = resolveItems(body, frame);
+  const head = items.find((i) => i.role === 'head');
+  if (!head) return null;
+  const rig = characterLayers(doc.layers, folderId)?.rig;
+  const bone = head.skin?.rigid;
+  const delta = bone && rig ? rigFor(doc.layers, frame)?.skin.get(bone) : null;
+  const m = delta ? multiply(delta, head.transform) : head.transform;
+  const box = itemBounds(head, m);
+  if (isEmpty(box)) return null;
+  const c = boxCenter(box);
+  return { x: c.x, y: c.y, r: Math.max(box.maxX - box.minX, box.maxY - box.minY) / 2 };
 }
 
 // the motion a first person shot has
