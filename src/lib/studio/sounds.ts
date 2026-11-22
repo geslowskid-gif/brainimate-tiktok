@@ -1,7 +1,7 @@
 // sound effects and music beds made in the browser: no files from anywhere else, nothing to license.
 // each one is worked out sample by sample, written as a wav and added like an imported sound
 
-export type Sfx = 'whoosh' | 'pop' | 'boom' | 'ding' | 'click' | 'riser' | 'impact' | 'sparkle' | 'buzzer' | 'drumroll';
+export type Sfx = 'whoosh' | 'pop' | 'boom' | 'ding' | 'click' | 'riser' | 'impact' | 'sparkle' | 'buzzer' | 'drumroll' | 'brakes' | 'crackle' | 'rattle' | 'rain' | 'vibrate' | 'drone' | 'lightsout' | 'alarm' | 'heartbeat' | 'wind' | 'shiver';
 
 export const SFX: { id: Sfx; label: string }[] = [
   { id: 'whoosh', label: 'Whoosh' },
@@ -13,7 +13,19 @@ export const SFX: { id: Sfx; label: string }[] = [
   { id: 'riser', label: 'Riser' },
   { id: 'sparkle', label: 'Sparkle' },
   { id: 'buzzer', label: 'Wrong buzzer' },
-  { id: 'drumroll', label: 'Drum roll' }
+  { id: 'drumroll', label: 'Drum roll' },
+  // for night, rain and trains: atmosphere and suspense
+  { id: 'brakes', label: 'Train brakes' },
+  { id: 'crackle', label: 'Loudspeaker crackle' },
+  { id: 'rattle', label: 'Train rattle (8 s)' },
+  { id: 'rain', label: 'Rain (8 s)' },
+  { id: 'vibrate', label: 'Phone vibrates' },
+  { id: 'drone', label: 'Deep drone (6 s)' },
+  { id: 'lightsout', label: 'Lights out' },
+  { id: 'alarm', label: 'Emergency alarm (3 s)' },
+  { id: 'heartbeat', label: 'Heartbeat (4 s)' },
+  { id: 'wind', label: 'Cold wind (6 s)' },
+  { id: 'shiver', label: 'Shiver (1.6 s)' }
 ];
 
 export type Mood = 'calm' | 'tense' | 'upbeat' | 'mystery';
@@ -132,6 +144,136 @@ export function sfxSamples(kind: Sfx): Float32Array {
         const t = i / RATE;
         const hit = (t * 18) % 1;
         out[i] = n() * Math.exp(-hit * 12) * (0.3 + 0.7 * (t / 1.5)) * 0.6;
+      }
+      break;
+    }
+    case 'brakes': {
+      // a long squeal over rumbling steel, slowing down
+      out = new Float32Array(len(2.6));
+      let lp = 0;
+      let ph = 0;
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const slow = 1 - t / 2.6;
+        lp += (n() - lp) * 0.04;
+        ph += (2 * Math.PI * (2900 + 400 * Math.sin(t * 7) + 300 * slow)) / RATE;
+        const squeal = Math.sin(ph) * 0.18 * Math.min(1, t * 3) * (0.4 + 0.6 * slow);
+        out[i] = (lp * 1.4 * slow + squeal) * (t > 2.3 ? (2.6 - t) / 0.3 : 1);
+      }
+      break;
+    }
+    case 'crackle': {
+      // a loudspeaker switching off: a hard click and a short burst of static
+      out = new Float32Array(len(0.7));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const pop = t < 0.012 ? Math.sin(t * 2 * Math.PI * 120) * 0.9 : 0;
+        const stat = n() * (Math.random() < 0.08 ? 0.9 : 0.25) * Math.exp(-t * 5);
+        out[i] = pop + stat * 0.7;
+      }
+      break;
+    }
+    case 'rattle': {
+      // a moving train: low rumble and the clack of the rail joints
+      out = new Float32Array(len(8));
+      let lp = 0;
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        lp += (n() - lp) * 0.015;
+        const beat = t % 0.9;
+        const clack = (beat < 0.04 ? Math.exp(-beat * 90) : 0) + (Math.abs(beat - 0.18) < 0.04 ? Math.exp(-Math.abs(beat - 0.18) * 90) : 0);
+        out[i] = lp * 2.2 + n() * clack * 0.35;
+      }
+      break;
+    }
+    case 'rain': {
+      // soft rain on a window: filtered noise with drops
+      out = new Float32Array(len(8));
+      let lp = 0;
+      for (let i = 0; i < out.length; i++) {
+        lp += (n() - lp) * 0.3;
+        const drop = Math.random() < 0.0008 ? 0.6 : 0;
+        out[i] = lp * 0.25 + drop * n();
+      }
+      break;
+    }
+    case 'vibrate': {
+      // a phone buzzing twice on a seat
+      out = new Float32Array(len(0.9));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const on = t < 0.32 || (t > 0.48 && t < 0.8) ? 1 : 0;
+        out[i] = on * (Math.sign(Math.sin(2 * Math.PI * 160 * t)) * 0.25 + n() * 0.05);
+      }
+      break;
+    }
+    case 'drone': {
+      // a deep tone that swells: suspense under a reveal
+      out = new Float32Array(len(6));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const sw = Math.min(1, t / 3) * (t > 5.2 ? (6 - t) / 0.8 : 1);
+        out[i] = sw * (Math.sin(2 * Math.PI * 49 * t) * 0.5 + Math.sin(2 * Math.PI * 73.5 * t + Math.sin(t) * 2) * 0.25 + Math.sin(2 * Math.PI * 98.3 * t) * 0.12);
+      }
+      break;
+    }
+    case 'alarm': {
+      // an emergency signal in a train: a two tone beep that repeats
+      out = new Float32Array(len(3));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const cyc = t % 0.75;
+        const f = cyc < 0.3 ? 880 : cyc < 0.6 ? 660 : 0;
+        const tri = f ? (2 / Math.PI) * Math.asin(Math.sin(2 * Math.PI * f * t)) : 0;
+        out[i] = tri * 0.28 * (t > 2.8 ? (3 - t) / 0.2 : 1);
+      }
+      break;
+    }
+    case 'heartbeat': {
+      // a slow heart, felt more than heard
+      out = new Float32Array(len(4));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const b = t % 1;
+        const thump = (u: number) => (u > 0 && u < 0.12 ? Math.sin(2 * Math.PI * 55 * u) * Math.exp(-u * 30) : 0);
+        out[i] = (thump(b) + 0.7 * thump(b - 0.22)) * 0.9;
+      }
+      break;
+    }
+    case 'wind': {
+      // a cold wind: noise that swells and falls, with a whistle in it
+      out = new Float32Array(len(6));
+      let lp = 0;
+      let lp2 = 0;
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const swell = 0.35 + 0.65 * Math.sin((Math.PI * t) / 6) ** 2 * (0.7 + 0.3 * Math.sin(t * 2.4));
+        lp += (n() - lp) * 0.035;
+        lp2 += (n() - lp2) * 0.012;
+        out[i] = (lp * 0.9 + lp2 * 1.4) * swell + Math.sin(2 * Math.PI * (900 + 120 * Math.sin(t * 1.3)) * t) * 0.012 * swell;
+      }
+      break;
+    }
+    case 'shiver': {
+      // a shimmer running up: fast tremolo on rising bright tones, the feeling of a chill
+      out = new Float32Array(len(1.6));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const f = 1800 + 1800 * (t / 1.6);
+        const trem = 0.5 + 0.5 * Math.sin(2 * Math.PI * 28 * t);
+        const env = Math.min(1, t / 0.08) * Math.exp(-Math.max(0, t - 0.7) * 3);
+        out[i] = (Math.sin(2 * Math.PI * f * t) * 0.14 + Math.sin(2 * Math.PI * f * 1.5 * t) * 0.07 + n() * 0.04) * trem * env;
+      }
+      break;
+    }
+    case 'lightsout': {
+      // a big switch, the hum of the lights dying
+      out = new Float32Array(len(1.2));
+      for (let i = 0; i < out.length; i++) {
+        const t = i / RATE;
+        const thunk = Math.sin(2 * Math.PI * 70 * t) * Math.exp(-t * 18) * 0.9;
+        const hum = Math.sin(2 * Math.PI * 100 * t) * 0.15 * Math.max(0, 1 - t / 0.5);
+        out[i] = thunk + hum + n() * 0.08 * Math.exp(-t * 25);
       }
       break;
     }

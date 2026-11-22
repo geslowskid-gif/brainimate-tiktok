@@ -22,7 +22,7 @@
   import { SFX, MOODS } from '$lib/studio/sounds';
   import { CATEGORIES, VISUALS, type VisualCategory } from '$lib/studio/visuals';
   import { addFormat, customFormats, deleteVideo, keepVideo, loadFormats, loadVideos, videoDoc, videos } from '$lib/studio/library';
-  import type { CameraMove, Certainty, PovAction, PovLook, PovSettings, Production, Scene, SceneMove, Status, TrackKind } from '$lib/studio/types';
+  import type { CameraMove, Certainty, PovAction, PovLook, PovSettings, Production, Scene, SceneMove, Status, SubsPlace, TrackKind } from '$lib/studio/types';
   import { newId } from '$lib/core/ids';
   import {
     addMusic,
@@ -550,6 +550,7 @@
             <SelectField value={s.transition} options={TRANSITION_KINDS} label="Transition in" onchange={(v) => upScene(s.id, 'Transition', { transition: v as typeof s.transition })} />
             <ToggleField value={!!s.slow} label="Slow motion" onchange={(v) => upScene(s.id, 'Slow motion', { slow: v })} />
           </div>
+          <SelectField value={s.subs ?? 'middle'} options={[{ value: 'middle', label: 'Subtitles: in the middle' }, { value: 'above', label: 'Subtitles: above the action' }, { value: 'below', label: 'Subtitles: below the action' }]} label="Where the subtitles stand" onchange={(v) => upScene(s.id, 'Subtitles', { subs: v as SubsPlace })} />
           {#if cast.length}
             <div class="two">
               <SelectField value={s.subject ?? ''} options={[{ value: '', label: 'Camera on: everyone' }, ...cast.map((c) => ({ value: c.id, label: `Camera on: ${c.character?.name}` }))]} label="Subject of the shot" onchange={(v) => upScene(s.id, 'Subject', { subject: v || undefined })} />

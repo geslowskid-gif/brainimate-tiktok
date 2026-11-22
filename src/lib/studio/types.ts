@@ -61,6 +61,9 @@ export type CameraMove =
   | 'reveal';
 
 // what the hands do in a first person shot
+// where the subtitles of a scene stand
+export type SubsPlace = 'middle' | 'above' | 'below';
+
 export type PovAction = 'none' | 'pickup' | 'door' | 'phone' | 'drive' | 'fight' | 'reach' | 'wave';
 export type PovLook = 'ahead' | 'left' | 'right' | 'up' | 'down' | 'around';
 
@@ -109,6 +112,9 @@ export interface Scene {
   slow?: boolean;
   // the film language preset it was set up with
   mood?: string;
+  // where the subtitles stand: in the middle of the picture, above the action or below it. above and
+  // below keep the subtitles off what has to be seen, a hand, rising hairs, a phone
+  subs?: SubsPlace;
 }
 
 export interface Source {
@@ -158,6 +164,10 @@ export interface Cue {
   certainty?: Certainty;
   // the script line it is a piece of
   line?: string;
+  // up from the bottom of the safe zone like the style's position, for this cue only
+  position?: number;
+  // the middle of the block as a share of the picture height, from the top; wins over position
+  y?: number;
 }
 
 export type TrackKind = 'narration' | 'dialogue' | 'music' | 'sfx';

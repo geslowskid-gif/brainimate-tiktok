@@ -3,7 +3,9 @@ import { newId } from '$lib/core/ids';
 import { makeLayer, LAYER_COLORS } from '$lib/editor/editor';
 import { restCamera, makeTransition, cameraKeyAt } from '$lib/anim/camera';
 import { applyPoint, multiply, translate } from '$lib/core/mat';
-import { worldMatrices } from '$lib/rig/bones';
+import { itemBounds } from '$lib/core/items';
+import { boxCenter, isEmpty } from '$lib/core/bbox';
+import { rigFor, worldMatrices } from '$lib/rig/bones';
 import { bonesAt } from '$lib/rig/turn';
 import { poseAt } from '$lib/render/frame';
 import { ANIMATIONS, talkPattern, type AnimKind } from '$lib/character/anim';
@@ -25,6 +27,9 @@ import type { CameraMove, Production, Scene } from './types';
 // person animated by hand alone
 
 export const MARK = 'scene:';
+
+// the height of the middle of the subtitles as a share of the picture: the middle, above the action, below it
+export const SUBS_Y = { middle: 0.5, above: 0.27, below: 0.73 } as const;
 
 function marked(k: Keyframe): boolean {
   return k.label.startsWith(MARK);
@@ -68,6 +73,24 @@ export function jointAt(doc: Doc, folderId: string, frame: number, name: 'Head' 
   if (!m) return null;
   // the middle of the head, the top of the hip
   return name === 'Head' ? applyPoint(m, { x: bone.length * 0.5, y: 0 }) : { x: m[4], y: m[5] };
+}
+
+// the skull of a character at a frame as a circle on the stage: its middle and radius, from the drawn head
+// and the hair, for things worn on it like headphones or a hat
+export function headCircle(doc: Doc, folderId: string, frame: number): { x: number; y: number; r: number } | null {
+  const body = characterLayers(doc.layers, folderId)?.body;
+  if (!body) return null;
+  const items = resolveItems(body, frame);
+  const head = items.find((i) => i.role === 'head');
+  if (!head) return null;
+  const rig = characterLayers(doc.layers, folderId)?.rig;
+  const bone = head.skin?.rigid;
+  const delta = bone && rig ? rigFor(doc.layers, frame)?.skin.get(bone) : null;
+  const m = delta ? multiply(delta, head.transform) : head.transform;
+  const box = itemBounds(head, m);
+  if (isEmpty(box)) return null;
+  const c = boxCenter(box);
+  return { x: c.x, y: c.y, r: Math.max(box.maxX - box.minX, box.maxY - box.minY) / 2 };
 }
 
 // the motion a first person shot has
@@ -311,7 +334,9 @@ function buildPov(doc: Doc, p: Production, spans: ReturnType<typeof sceneStarts>
           if (h) items.splice(items.length - 3, 0, h);
         }
         if (phoneFrom !== null && f >= phoneFrom) {
-          const h = heldItem('phone', { x: W / 2, y: H * 0.7 }, 2.2, 'pov.phone');
+          // a phone with a screen to read is held big, its lower edge in the hands
+          const screen = !!pov.item && pov.item.startsWith('phone-');
+          const h = heldItem(screen ? pov.item : 'phone', { x: W / 2, y: H * (screen ? 0.64 : 0.7) }, screen ? 1.6 : 2.2, 'pov.phone');
           if (h) items.splice(items.length - 6, 0, h);
         }
         const k = keyAt(hands, start + f);
@@ -552,6 +577,14 @@ export function buildTimeline(doc: Doc, p: Production): Built {
   }
 
   for (const l of doc.layers) if (l.type !== 'folder') l.length = Math.max(l.length, total);
+  // where the subtitles stand: in the middle, or out of the way of what has to be seen. a phone held in a
+  // first person scene always keeps its screen free
+  for (const c of cues) {
+    const span = spans.find((x) => c.start >= x.start && c.start < x.end);
+    if (!span) continue;
+    const place = span.scene.subs ?? (isPov(span.scene) && span.scene.pov?.action === 'phone' ? 'above' : 'middle');
+    c.y = SUBS_Y[place];
+  }
   p.cues = cues;
   doc.production = p;
   return { scenes: spans.length, frames: total, cues: p.cues.length };

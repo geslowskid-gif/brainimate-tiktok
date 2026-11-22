@@ -260,3 +260,58 @@ describe('the three test projects', () => {
     }
   });
 });
+
+describe('subtitles over a phone', () => {
+  beforeEach(() => {
+    editor.newDoc(W, H, 24);
+    frame.set(0);
+    selection.set(new Set());
+  });
+
+  it('moves the subtitles of a first person phone scene up, the others stay', () => {
+    const { tom } = setup();
+    updateProduction('phone', (p) => {
+      p.scenes[1].camera = 'pov-interact';
+      p.scenes[1].pov = { actor: tom, look: 'down', action: 'phone', at: 0.1, item: 'phone-message', hands: true };
+      p.lines = [
+        { id: 'a', beat: p.scenes[0].beat, speaker: 'narrator', text: 'Ein ganz normaler Satz', scene: p.scenes[0].id },
+        { id: 'b', beat: p.scenes[1].beat, speaker: 'narrator', text: 'Dann vibrierte das Handy', scene: p.scenes[1].id }
+      ];
+      return p;
+    });
+    buildFromStoryboard();
+    const cues = production()!.cues;
+    expect(cues.find((c) => c.line === "a")!.y).toBe(0.5);
+    expect(cues.find((c) => c.line === "b")!.y).toBeLessThan(0.4);
+  });
+});
+
+describe('where the subtitles stand', () => {
+  beforeEach(() => {
+    editor.newDoc(W, H, 24);
+    frame.set(0);
+    selection.set(new Set());
+  });
+
+  it('puts them in the middle, above or below the action by scene, exactly in the horizontal middle', async () => {
+    const { SUBS_Y } = await import('./build');
+    setup();
+    updateProduction('subs', (p) => {
+      p.scenes[0].subs = 'above';
+      p.scenes[1].subs = 'below';
+      p.lines = [
+        { id: 'a', beat: p.scenes[0].beat, speaker: 'narrator', text: 'Oben', scene: p.scenes[0].id },
+        { id: 'b', beat: p.scenes[1].beat, speaker: 'narrator', text: 'Unten', scene: p.scenes[1].id },
+        { id: 'c', beat: p.scenes[2].beat, speaker: 'narrator', text: 'Mitte', scene: p.scenes[2].id }
+      ];
+      return p;
+    });
+    buildFromStoryboard();
+    const cues = production()!.cues;
+    expect(cues.find((c) => c.line === 'a')!.y).toBe(SUBS_Y.above);
+    expect(cues.find((c) => c.line === 'b')!.y).toBe(SUBS_Y.below);
+    expect(cues.find((c) => c.line === 'c')!.y).toBe(SUBS_Y.middle);
+    expect(SUBS_Y.above).toBeLessThan(SUBS_Y.middle);
+    expect(SUBS_Y.middle).toBeLessThan(SUBS_Y.below);
+  });
+});
