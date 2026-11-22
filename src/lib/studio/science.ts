@@ -256,7 +256,7 @@ export function nervous(s: number, cross = 0): Item[] {
   out.push(
     group('switch', [rect('sw.box', 700, 1610, 230, 110, '#2c3846', 6, 55), ellipse('sw.knob', 760, 1665, 42, 42, SC.cream, 5), stroke('sw.x1', [{ x: 690, y: 1570 }, { x: 940, y: 1750 }], '#d06a6a', 14), stroke('sw.x2', [{ x: 940, y: 1570 }, { x: 690, y: 1750 }], '#d06a6a', 14)], cross),
     label('sw.text', 'nicht bewusst\nsteuerbar', 120, 1610, 54, SC.cream, cross, 520),
-    label('ans', 'autonomes\nNervensystem', 130, 150, 76, SC.cream, 1, 520)
+    label('ans', 'autonomes\nNervensystem', 130, 150, 62, SC.cream, 1, 520)
   );
   return out;
 }
@@ -364,7 +364,7 @@ export function catHuman(s: number): Item[] {
     place('cat', catBristle(s), 60, 120, 0.95),
     place('human', arm, 216, 700, 0.6),
     label('l.cat', 'Katze\nbei Gefahr', 130, 190, 76, SC.cream, 1, 520),
-    label('l.human', 'Mensch: Gänsehaut', 130, 1060, 66, SC.cream, 1, 860)
+    label('l.human', 'Mensch: Gänsehaut', 130, 990, 62, SC.cream, 1, 860)
   ];
 }
 
@@ -421,7 +421,7 @@ export function feelings(kind: 'music' | 'film' | 'moment', t: number): Item[] {
       shape('beam.2', poly([{ x: 740, y: -40 }, { x: 880, y: -40 }, { x: 1100, y: 1400 }, { x: 520, y: 1400 }]), '#d0708a', 0, 0.3),
       ...[0, 1, 2, 3].map((i) => note(`n${i}`, 160 + i * 250, 1000 - i * 90 - t * 520 + ((i % 2) * 120), 1.5, ['#f0a23a', '#f2c4d0', '#9ad0f0', '#f0a23a'][i], Math.max(0, 1 - t * 0.6))),
       ...crowd(3, '#120d1f', true, t),
-      label('f.t', 'bewegende\nMusik', 130, 190, 84, SC.cream, 1, 520, 'left')
+      label('f.t', 'bewegende\nMusik', 130, 190, 72, SC.cream, 1, 520, 'left')
     ];
   }
   if (kind === 'film') {
@@ -433,7 +433,7 @@ export function feelings(kind: 'music' | 'film' | 'moment', t: number): Item[] {
       shape('beam', poly([{ x: 490, y: 1900 }, { x: 590, y: 1900 }, { x: 940, y: 300 }, { x: 140, y: 300 }]), '#9db8d6', 0, 0.12),
       ...crowd(2, '#0a0c10', false, t),
       ellipse('tear', 700, lerp(1420, 1500, t), 12, 18, '#9ad0f0', 3, t),
-      label('f.t', 'ein emotionaler\nFilm', 130, 190, 84, SC.cream, 1, 520)
+      label('f.t', 'ein emotionaler\nFilm', 130, 190, 66, SC.cream, 1, 520)
     ];
   }
   return [
@@ -446,7 +446,7 @@ export function feelings(kind: 'music' | 'film' | 'moment', t: number): Item[] {
     rect('p.body', 540, 1032, 40, 70, '#120d1f', 0, 14),
     stroke('p.arm.l', [{ x: 542, y: 1044 }, { x: 500, y: 984 }], '#120d1f', 14),
     stroke('p.arm.r', [{ x: 578, y: 1044 }, { x: 622, y: 984 }], '#120d1f', 14),
-    label('f.t', 'ein überwältigender\nMoment', 130, 190, 80, '#2b1b2b', 1, 560)
+    label('f.t', 'ein\nüberwältigender\nMoment', 130, 190, 62, '#2b1b2b', 1, 520)
   ];
 }
 
