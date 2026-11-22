@@ -18,7 +18,7 @@ export function castOptions(id: CastId, width: number, height: number, x: number
         name: 'Erklärer',
         x,
         facing,
-        height: Math.round(height * 0.27),
+        height: Math.round(height * 0.3),
         ground: Math.round(height * 0.955),
         hair: 'sidepart',
         seed: 31,

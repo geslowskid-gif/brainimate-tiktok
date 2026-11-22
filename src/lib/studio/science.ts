@@ -199,7 +199,7 @@ export function skinSection(s: number, labels = 1): Item[] {
       stroke('l1', [{ x: 700, y: 560 }, { x: 600, y: 640 }], SC.cream, 6),
       label('t1', 'Haar', 710, 490, 62),
       stroke('l2', [{ x: 250, y: 1150 }, { x: 300, y: 1070 }], SC.cream, 6),
-      label('t2', 'Haarbalgmuskel', 60, 1170, 60, SC.cream, 1, 700),
+      label('t2', 'Haarbalgmuskel', 150, 1170, 60, SC.cream, 1, 700),
       label('t3', 'Haut', 700, 1220, 62, '#5a3a35')
     ], labels)
   );
@@ -256,7 +256,7 @@ export function nervous(s: number, cross = 0): Item[] {
   out.push(
     group('switch', [rect('sw.box', 700, 1610, 230, 110, '#2c3846', 6, 55), ellipse('sw.knob', 760, 1665, 42, 42, SC.cream, 5), stroke('sw.x1', [{ x: 690, y: 1570 }, { x: 940, y: 1750 }], '#d06a6a', 14), stroke('sw.x2', [{ x: 940, y: 1570 }, { x: 690, y: 1750 }], '#d06a6a', 14)], cross),
     label('sw.text', 'nicht bewusst\nsteuerbar', 120, 1610, 54, SC.cream, cross, 520),
-    label('ans', 'autonomes\nNervensystem', 60, 110, 76, SC.cream, 1, 800)
+    label('ans', 'autonomes\nNervensystem', 130, 150, 76, SC.cream, 1, 520)
   );
   return out;
 }
@@ -363,8 +363,8 @@ export function catHuman(s: number): Item[] {
     rect('floor', -40, 1010, 1160, 1000, '#1c2523', 0),
     place('cat', catBristle(s), 60, 120, 0.95),
     place('human', arm, 216, 700, 0.6),
-    label('l.cat', 'Katze bei Gefahr', 60, 150, 76, SC.cream),
-    label('l.human', 'Mensch: Gänsehaut', 60, 1060, 66, SC.cream, 1, 960)
+    label('l.cat', 'Katze\nbei Gefahr', 130, 190, 76, SC.cream, 1, 520),
+    label('l.human', 'Mensch: Gänsehaut', 130, 1060, 66, SC.cream, 1, 860)
   ];
 }
 
@@ -384,9 +384,9 @@ export function airLayer(s: number): Item[] {
       const y = lerp(1150, 760, e);
       return group(`cold.${i}`, [stroke(`cold.${i}.l`, [{ x, y: y - 260 }, { x, y }], SC.cold, 14), shape(`cold.${i}.h`, poly([{ x: x - 34, y: y - 28 }, { x: x + 34, y: y - 28 }, { x, y: y + 22 }]), SC.cold, 5)]);
     }),
-    label('cold.t', 'Kälte', 60, 250, 80, SC.cold),
-    label('air.t', 'Luftschicht', 60, 1340, 78, '#f6e9a8', e),
-    label('warm.t', 'hält die Wärme', 60, 1440, 58, SC.cream, e)
+    label('cold.t', 'Kälte', 130, 190, 80, SC.cold, 1, 520),
+    label('air.t', 'Luftschicht', 130, 1340, 78, '#f6e9a8', e),
+    label('warm.t', 'hält die Wärme', 130, 1440, 58, SC.cream, e)
   );
   return items;
 }
@@ -421,7 +421,7 @@ export function feelings(kind: 'music' | 'film' | 'moment', t: number): Item[] {
       shape('beam.2', poly([{ x: 740, y: -40 }, { x: 880, y: -40 }, { x: 1100, y: 1400 }, { x: 520, y: 1400 }]), '#d0708a', 0, 0.3),
       ...[0, 1, 2, 3].map((i) => note(`n${i}`, 160 + i * 250, 1000 - i * 90 - t * 520 + ((i % 2) * 120), 1.5, ['#f0a23a', '#f2c4d0', '#9ad0f0', '#f0a23a'][i], Math.max(0, 1 - t * 0.6))),
       ...crowd(3, '#120d1f', true, t),
-      label('f.t', 'bewegende Musik', 60, 220, 84, SC.cream, 1, 960, 'left')
+      label('f.t', 'bewegende\nMusik', 130, 190, 84, SC.cream, 1, 520, 'left')
     ];
   }
   if (kind === 'film') {
@@ -433,7 +433,7 @@ export function feelings(kind: 'music' | 'film' | 'moment', t: number): Item[] {
       shape('beam', poly([{ x: 490, y: 1900 }, { x: 590, y: 1900 }, { x: 940, y: 300 }, { x: 140, y: 300 }]), '#9db8d6', 0, 0.12),
       ...crowd(2, '#0a0c10', false, t),
       ellipse('tear', 700, lerp(1420, 1500, t), 12, 18, '#9ad0f0', 3, t),
-      label('f.t', 'ein emotionaler Film', 60, 150, 84, SC.cream, 1, 960)
+      label('f.t', 'ein emotionaler\nFilm', 130, 190, 84, SC.cream, 1, 520)
     ];
   }
   return [
@@ -446,7 +446,7 @@ export function feelings(kind: 'music' | 'film' | 'moment', t: number): Item[] {
     rect('p.body', 540, 1032, 40, 70, '#120d1f', 0, 14),
     stroke('p.arm.l', [{ x: 542, y: 1044 }, { x: 500, y: 984 }], '#120d1f', 14),
     stroke('p.arm.r', [{ x: 578, y: 1044 }, { x: 622, y: 984 }], '#120d1f', 14),
-    label('f.t', 'ein überwältigender Moment', 60, 190, 80, '#2b1b2b', 1, 960)
+    label('f.t', 'ein überwältigender\nMoment', 130, 190, 80, '#2b1b2b', 1, 560)
   ];
 }
 
@@ -461,6 +461,14 @@ export function brainQuestion(t: number): Item[] {
     items.push(ellipse(`ring.${i}`, 540, 820, 250 + p * 420, 190 + p * 330, null, 6, 0.75 * (1 - p)));
   }
   [[200, 460, 160], [860, 420, 190], [260, 1180, 150], [820, 1160, 170]].forEach(([x, y, size], i) => items.push(text(`q.${i}`, '?', x, y - t * 70 - i * 6, size, SC.amber, { weight: 800, width: 200, align: 'center', opacity: 0.9 })));
-  items.push(label('b.t', 'Was genau macht\ndas Gehirn dabei?', 60, 1420, 76, SC.cream, 1, 960));
+  items.push(label('b.t', 'Was genau macht\ndas Gehirn dabei?', 130, 1420, 76, SC.cream, 1, 860));
   return items;
+}
+
+// headphones over a head: a band over the top and a cup on each ear, r is the radius of the head
+export function headphones(x: number, y: number, r: number, opacity = 1): Item[] {
+  const band = stroke('hp.band', curve([{ x: x - r * 1.02, y: y + r * 0.1 }, { x: x - r * 0.9, y: y - r * 0.85 }, { x, y: y - r * 1.25 }, { x: x + r * 0.9, y: y - r * 0.85 }, { x: x + r * 1.02, y: y + r * 0.1 }]), '#2a2d33', r * 0.2, opacity);
+  const rim = stroke('hp.rim', curve([{ x: x - r * 1.02, y: y + r * 0.1 }, { x: x - r * 0.9, y: y - r * 0.85 }, { x, y: y - r * 1.25 }, { x: x + r * 0.9, y: y - r * 0.85 }, { x: x + r * 1.02, y: y + r * 0.1 }]), '#d0a040', r * 0.06, opacity);
+  const cup = (id: string, cx: number) => ellipse(id, cx, y + r * 0.15, r * 0.3, r * 0.42, '#2a2d33', 5, opacity);
+  return [band, rim, cup('hp.l', x - r * 1.0), cup('hp.r', x + r * 1.0)];
 }
